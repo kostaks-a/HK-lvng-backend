@@ -11,14 +11,14 @@ const userSchema = new Schema(
       type: String,
       required: [true, 'Password is required.']
     },
-    creations: {
-      type: [Schema.Types.ObjectId],
+    creations: [{
+      type: Schema.Types.ObjectId,
       ref: "Recipe"
-    },
-    favorites: {
-      type: [Schema.Types.ObjectId],
+    }],
+    favourites: [{
+      type: Schema.Types.ObjectId,
       ref: "Recipe"
-    }
+    }]
   }
 );
 

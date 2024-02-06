@@ -102,9 +102,13 @@ router.post("/login", async (req, res, next) => {
 
 
 
-router.get("/verify", isAuthenticated, (req, res, next) => {
-  console.log(`req.payload:`, req.payload);
-  res.status(200).json(req.payload);
+router.get("/verify", isAuthenticated, async (req, res, next) => {
+  try {
+    const user = await User.findById(req.payload._id);
+    res.status(200).json({...req.payload, favourites: user.favourites});
+  } catch (error) {
+    console.log(error);
+  }  
 });
 
 module.exports = router;
