@@ -101,11 +101,34 @@ router.post("/login", async (req, res, next) => {
   });
 
 
+  router.put('/user/update' , isAuthenticated , async (req, res , next) =>{
+    const { username, password } = req.body;
+    try {
+      const user = await User.findById(req.payload._id);
+      const passwordCorrect = bcrypt.compareSync(password, user.passwordHash);
+      console.log(passwordCorrect)
+      if (password && !passwordCorrect) {
+        const salt = bcrypt.genSaltSync(13);
+        const hashedPassword = bcrypt.hashSync(password, salt);
+        const updatedUser = await User.findByIdAndUpdate(req.payload._id, {username : username , passwordHash : hashedPassword}, { new: true });
+        console.log(updatedUser);
+        res.status(200).json({message: "User and password updated successfully." , username : updatedUser.username });
+      } else {
+        const updatedUser = await User.findByIdAndUpdate(req.payload._id, {username : username}, { new: true });
+        console.log(updatedUser);
+        res.status(200).json({message: "User updated successfully." , username : updatedUser.username });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  })
+
+
 
 router.get("/verify", isAuthenticated, async (req, res, next) => {
   try {
     const user = await User.findById(req.payload._id);
-    res.status(200).json({...req.payload, favourites: user.favourites});
+    res.status(200).json({...req.payload, username: user.username ,creations : user.creations , favourites: user.favourites});
   } catch (error) {
     console.log(error);
   }  
